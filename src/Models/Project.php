@@ -18,11 +18,13 @@ class Project {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $data['tip'],
-            $data['title'], 
+            $data['title'],
             $data['buget'],
-            $data['descriere'],
+
+            isset($data['descriere']) && $data['descriere'] !== '' ? $data['descriere'] : null,
             $data['id_status'],
-            $data['durata_derulare'],
+
+            isset($data['durata_derulare']) && $data['durata_derulare'] !== '' ? $data['durata_derulare'] : null,
             $data['poster_url'],
             $data['contribuitor']
         ]);
