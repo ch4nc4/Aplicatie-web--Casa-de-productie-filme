@@ -108,6 +108,19 @@
         <a href="/" class="back-link">← Înapoi la pagina principală</a>
         
         <div class="logo">Login</div>
+
+        <details style="margin-bottom: 20px;">
+            <summary style="cursor:pointer;font-weight:bold;color:rgb(102, 15, 34);font-size:1.05em;">
+                Despre roluri
+            </summary>
+            <div style="margin-top:10px; color:#333; font-size:0.98em;">
+                În momentul în care un user se autentifică, acesta are rol de <strong>utilizator autentificat</strong>.<br>
+                Dacă acesta alege să navigheze aplicația fără să se autentifice, rolul lui va fi de <strong>utilizator extern</strong>.<br>
+                Pentru roluri cu mai multe permisiuni consultați acest fișier care descrie rolurile valabile:
+                <a href="/../../../public/roluri.txt" target="_blank" style="color:#007bff;text-decoration:underline;">→ Descriere roluri</a><br>
+                În eventualitatea în care decideți că vă doriți un alt rol, puteți contacta admin-ul acestui website la adresa de e-mail: <a href="mailto:raluca.ionete@gmail.com">raluca.ionete@gmail.com</a>
+            </div>
+        </details>
         
         <?php if (isset($error)): ?>
             <div class="error"><?= htmlspecialchars($error) ?></div>
@@ -119,13 +132,42 @@
             </div>
         <?php endif; ?>
 
-        <?php if (isset($needsPasswordSetup) && $needsPasswordSetup): ?>
-            <div class="info">
-                Contul tău nu are parolă setată. Te rugăm să contactezi administratorul pentru a-ți seta parola.
-            </div>
+      <?php if (isset($needsPasswordSetup) && $needsPasswordSetup): ?>
+            <form method="POST" action="/auth/set-password">
+                <?php echo csrf_token_field(); ?>
+                <input type="hidden" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                <div class="info">
+                    Contul tău nu are parolă setată. Te rugăm să setezi o parolă nouă mai jos:
+                </div>
+                <div class="form-group">
+                    <label for="new_password">Parolă nouă:</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirmă parola:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn">Setează parola</button>
+            </form>
+        <?php else: ?>
+            <form method="POST" action="/auth/login">
+                <?php echo csrf_token_field(); ?>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required 
+                        value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Parolă:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn">Intră în cont</button>
+            </form>
         <?php endif; ?>
 
-        <form method="POST" action="/auth/login">
+        <!-- <form method="POST" action="/auth/login">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required 
@@ -138,7 +180,7 @@
             </div>
             
             <button type="submit" class="btn">Intră în cont</button>
-        </form>
+        </form> -->
 
         <div class="links">
             <a href="/signup">Nu ai cont? Înregistrează-te</a>

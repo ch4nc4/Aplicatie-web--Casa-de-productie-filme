@@ -48,7 +48,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
         .btn {
             display: block;
             width: 80%;
-            margin: 15px auto;
+            margin: 8px auto;
             padding: 15px 20px;
             background-color:rgb(157, 164, 171);
             color: black;
@@ -93,7 +93,7 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
         .navigation {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 5px;
         }
         .auth-buttons {
             display: flex;
@@ -132,13 +132,37 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
                 </div>
             <?php endif; ?>
 
+            <a href="/crew" class="btn">
+                Vezi Crew
+            </a>
+
+            <?php if ($isLoggedIn): ?>
+                <a href="/user/profile" class="btn">
+                    Vezi Profil
+                </a>
+            <?php endif; ?>
+
+            <?php if ($isLoggedIn && in_array('Admin', $_SESSION['roles'] ?? [])): ?>
+                <a href="/admin/users" class="btn">
+                    Vezi Useri
+                </a>
+            <?php endif; ?>
+
             <a href="/views/projects" class="btn">
                 Vezi Proiecte
             </a>
 
-            <a href="/views/statuses" class="btn">
-                Vezi Statusuri Proiecte
-            </a>
+            <?php if ($isLoggedIn && !in_array('Utilizator autentificat', $_SESSION['roles'] ?? [])): ?>
+                <a href="/views/statuses" class="btn">
+                    Vezi Statusuri Proiecte
+                </a>
+            <?php endif; ?>
+
+            <?php if ($isLoggedIn): ?>
+                <a href="/views/watchlist" class="btn">
+                    Vezi Watchlist
+                </a>
+            <?php endif; ?>
 
             <a href="/views/descriptions" class="btn btn-secondary">
                 Despre Aplicație

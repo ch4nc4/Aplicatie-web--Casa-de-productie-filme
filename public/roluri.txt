@@ -1,0 +1,9 @@
+Roluri disponibile în aplicație:
+
+Admin: Acces complet la toate datele și funcționalitățile aplicației.
+Utilizator autentificat: Poate vedea proiectele și își poate gestiona propria listă de vizionare (watchlist).
+Utilizator extern: Poate doar vizualiza proiectele publice, fără alte drepturi.
+Lider producție: Gestionează proiectele la care este lider, poate administra echipa și statusul proiectului.
+Staff producție: Poate vedea proiectele la care participă și poate adăuga actualizări sau rapoarte de progres.
+
+Pentru detalii suplimentare despre permisiuni sau pentru a solicita un alt rol, vă rugăm să consultați acest document sau să contactați administratorul aplicației la adresa: raluca.ionete@gmail.com.

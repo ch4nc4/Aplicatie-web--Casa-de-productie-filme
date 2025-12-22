@@ -128,6 +128,7 @@
         <?php endif; ?>
         
         <form method="POST" action="/statuses/store">
+            <?php echo csrf_token_field(); ?>
             <div class="form-group">
                 <label for="nume">Nume Status <span class="required">*</span></label>
                 <input type="text" id="nume" name="nume" required maxlength="100"
@@ -135,7 +136,6 @@
                        placeholder="Ex: În dezvoltare, Pre-producție, Filmări, etc.">
                 <div class="help-text">Numele statusului (maxim 100 caractere)</div>
             </div>
-            
             <div class="form-row">
                 <div class="form-group">
                     <label for="data_start">Data Start <span class="required">*</span></label>
@@ -145,28 +145,18 @@
                     </div>
                     <div class="help-text">Când începe acest status</div>
                 </div>
-                
                 <div class="form-group">
                     <label for="data_finalizare">Data Finalizare</label>
                     <div class="datetime-input">
-                        <input type="datetime-local" id="data_finalizare" name="data_finalizare"
-                               value="<?= isset($_POST['data_finalizare']) ? htmlspecialchars($_POST['data_finalizare']) : '' ?>">
+                        <input type="datetime-local" id="data_finalizare" name="data_finalizare">
                     </div>
-                    <div class="help-text">Opțional - când se finalizează statusul</div>
                 </div>
             </div>
-            
             <div class="form-group">
                 <label for="nota_aditionala">Notă Adițională</label>
-                <textarea id="nota_aditionala" name="nota_aditionala" 
-                          placeholder="Informații adiționale despre acest status, instrucțiuni speciale, observații..."><?= isset($_POST['nota_aditionala']) ? htmlspecialchars($_POST['nota_aditionala']) : '' ?></textarea>
-                <div class="help-text">Detalii suplimentare despre status (opțional)</div>
+                <textarea id="nota_aditionala" name="nota_aditionala"></textarea>
             </div>
-            
-            <div class="form-group">
-                <button type="submit" class="btn">Creează Status</button>
-                <a href="/views/statuses" class="btn btn-secondary" style="margin-left: 10px;">Anulează</a>
-            </div>
+            <button type="submit" class="btn btn-success">Salvează Statusul</button>
         </form>
     </div>
 

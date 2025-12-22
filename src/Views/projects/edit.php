@@ -1,3 +1,22 @@
+<?php
+    session_start();
+    $userId = $_SESSION['user_id'] ?? null;
+
+    // Security headers for clickjacking and XSS protection
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Content-Security-Policy: default-src \'self\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\';');
+
+    // CSRF token helper
+    define('CSRF_TOKEN_NAME', 'csrf_token');
+    if (empty($_SESSION[CSRF_TOKEN_NAME])) {
+        $_SESSION[CSRF_TOKEN_NAME] = bin2hex(random_bytes(32));
+    }
+    function csrf_token_field() {
+        return '<input type="hidden" name="' . CSRF_TOKEN_NAME . '" value="' . htmlspecialchars($_SESSION[CSRF_TOKEN_NAME]) . '">';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -186,33 +205,66 @@
                 <?php 
                 try {
                     require_once __DIR__ . '/../../Models/Project.php';
+                    require_once __DIR__ . '/../../Models/ProjectMember.php';
                     $projectModel = new Project();
+                    $projectMemberModel = new ProjectMember();
+
                     $allProjects = $projectModel->getAll();
-                    if (!empty($allProjects)): 
+
+                    // Proiecte unde userul este contribuitor principal
+                    $contributorProjects = array_filter($allProjects, function($proj) use ($userId) {
+                        return $proj['id_contribuitor'] == $userId;
+                    });
+
+                    // Proiecte unde userul este doar membru (NU și contribuitor principal)
+                    $memberProjects = array_filter($allProjects, function($proj) use ($userId, $projectMemberModel) {
+                        return $proj['id_contribuitor'] != $userId && $projectMemberModel->isMember($userId, $proj['id']);
+                    });
                 ?>
                     <div style="margin-top: 20px;">
-                        <h3>Proiecte Disponibile:</h3>
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            <?php foreach ($allProjects as $proj): ?>
-                                <a href="/projects/edit?project_identifier=<?= $proj['id'] ?>" 
-                                   class="btn btn-secondary" 
-                                   style="padding: 8px 12px; font-size: 14px; text-align: left;">
-                                    <div>
-                                        <strong>ID: <?= $proj['id'] ?></strong>
-                                        <span class="type-badge type-<?= $proj['tip'] ?>"><?= strtoupper($proj['tip']) ?></span>
-                                    </div>
-                                    <div style="font-size: 12px; margin-top: 2px;">
-                                        <?= htmlspecialchars(substr($proj['title'], 0, 25)) ?><?= strlen($proj['title']) > 25 ? '...' : '' ?>
-                                    </div>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
+                        <?php if (!empty($contributorProjects)): ?>
+                            <h3>Proiecte unde ești <span style="color:#007bff;">Contribuitor Principal</span>:</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                <?php foreach ($contributorProjects as $proj): ?>
+                                    <a href="/projects/edit?project_identifier=<?= $proj['id'] ?>" 
+                                    class="btn btn-secondary" 
+                                    style="padding: 8px 12px; font-size: 14px; text-align: left;">
+                                        <div>
+                                            <strong>ID: <?= $proj['id'] ?></strong>
+                                            <span class="type-badge type-<?= $proj['tip'] ?>"><?= strtoupper($proj['tip']) ?></span>
+                                        </div>
+                                        <div style="font-size: 12px; margin-top: 2px;">
+                                            <?= htmlspecialchars(substr($proj['title'], 0, 25)) ?><?= strlen($proj['title']) > 25 ? '...' : '' ?>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($memberProjects)): ?>
+                            <h3 style="margin-top:30px;">Proiecte unde ești <span style="color:#28a745;">Membru (Staff)</span>:</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                <?php foreach ($memberProjects as $proj): ?>
+                                    <a href="/projects/edit?project_identifier=<?= $proj['id'] ?>" 
+                                    class="btn btn-secondary" 
+                                    style="padding: 8px 12px; font-size: 14px; text-align: left;">
+                                        <div>
+                                            <strong>ID: <?= $proj['id'] ?></strong>
+                                            <span class="type-badge type-<?= $proj['tip'] ?>"><?= strtoupper($proj['tip']) ?></span>
+                                        </div>
+                                        <div style="font-size: 12px; margin-top: 2px;">
+                                            <?= htmlspecialchars(substr($proj['title'], 0, 25)) ?><?= strlen($proj['title']) > 25 ? '...' : '' ?>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php 
-                    endif;
-                } catch (Exception $e) {
-                    // Ignore error if we can't load projects
-                }
+                    // end if projects
+                    } catch (Exception $e) {
+                        // Ignore error if we can't load projects
+                    }
                 ?>
             </div>
 
@@ -240,7 +292,8 @@
             </div>
             
             <form method="POST" action="/projects/update">
-                <input type="hidden" name="id" value="<?= $project['id'] ?>">
+                <?php echo csrf_token_field(); ?>
+                <input type="hidden" name="id" value="<?= htmlspecialchars($project['id']) ?>">
                 
                 <div class="form-group">
                     <label for="titlu">Titlu Proiect <span class="required">*</span></label>
@@ -390,6 +443,6 @@
                 return false;
             }
         });
-    </script>
-</body>
+          </script>
+    </body>
 </html>

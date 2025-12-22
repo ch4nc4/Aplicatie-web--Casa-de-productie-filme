@@ -49,16 +49,22 @@ class User {
     
     // UPDATE - Update user
     public function update($id, $data) {
-        $sql = "UPDATE USER 
-                SET prenume = ?, nume_familie = ?, email = ?, telefon = ?, rol = ? 
-                WHERE id = ?";
+        $sql = "UPDATE USER SET 
+            prenume = ?, 
+            nume_familie = ?, 
+            username = ?, 
+            bio = ?, 
+            avatar_url = ?, 
+            numar_telefon = ?
+            WHERE id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $data['prenume'],
             $data['nume_familie'],
-            $data['email'],
-            $data['telefon'] ?? null,
-            $data['rol'] ?? 'contributor',
+            $data['username'],
+            $data['bio'],
+            $data['avatar_url'],
+            $data['numar_telefon'],
             $id
         ]);
     }
@@ -132,5 +138,39 @@ class User {
             return $user['prenume'] . ' ' . $user['nume_familie'];
         }
         return null;
+    }
+
+    public function findById($id) {
+        $stmt = $this->db->prepare("SELECT * FROM USER WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function findByEmail($email) {
+        $stmt = $this->db->prepare("SELECT * FROM USER WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updatePassword($id, $hashedPassword) {
+        $stmt = $this->db->prepare("UPDATE USER SET hash_parola = ? WHERE id = ?");
+        return $stmt->execute([$hashedPassword, $id]);
+    }
+
+   
+    public function getCrewMembers() {
+        $sql = "
+            SELECT 
+                U.id, U.prenume, U.nume_familie, U.email, ROL.nume AS rol
+            FROM USER U
+            JOIN ROL_USER RU ON RU.id_user = U.id
+            JOIN ROL ON RU.id_rol = ROL.id
+            WHERE ROL.nume IN ('Lider productie', 'Staff productie')
+            GROUP BY U.id, ROL.nume, U.nume_familie, U.prenume
+            ORDER BY U.nume_familie, U.prenume
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

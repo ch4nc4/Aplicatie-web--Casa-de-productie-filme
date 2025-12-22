@@ -32,7 +32,7 @@ class Project {
     
     // READ - toate proiectele
     public function getAll() {
-        $sql = "SELECT p.*, s.nume as status_name, u.prenume, u.nume_familie 
+        $sql = "SELECT p.*, p.contribuitor AS id_contribuitor, s.nume as status_name, u.prenume, u.nume_familie 
                 FROM PROIECT p 
                 LEFT JOIN STATUS_PROIECT s ON p.id_status = s.id
                 LEFT JOIN USER u ON p.contribuitor = u.id

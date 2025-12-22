@@ -6,7 +6,7 @@
     <title> Casa de productie filme independenta </title>
     <style>
         li {
-            margin-bottom: 16px; /* Adjust spacing as needed */
+            margin-bottom: 16px; 
         }
     </style>
 </head>

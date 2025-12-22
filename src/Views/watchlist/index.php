@@ -1,15 +1,9 @@
-<?php
-session_start();
-$isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-$userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
-?>
-
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proiecte - Casa de Producție Filme</title>
+    <title>Watchlist - Casa de Producție Filme</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -101,33 +95,18 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
         <a href="/" class="back-link">← Înapoi la pagina principală</a>
         
         <div class="header">
-            <div class="title">Gestionare Proiecte</div>
+            <div class="title">Gestionare watchlist</div>
             <div class="subtitle">Operațiuni disponibile</div>
         </div>
         
         <div class="navigation">
-            <a href="/projects/show" class="btn">
-                Vizualizează toate proiectele
+            <a href="/watchlist/show" class="btn">
+                Vizualizează toate obiectele din watchlist
             </a>
-
-            <?php if ($isLoggedIn && !in_array('Utilizator autentificat', $_SESSION['roles'] ?? [])): ?>
-                <?php if ($isLoggedIn && !in_array('Staff productie', $_SESSION['roles'] ?? [])): ?>
-                    <a href="/projects/create" class="btn">
-                        Creează proiect nou
-                    </a>
-                <?php endif; ?>
-                
-                <a href="/projects/edit" class="btn">
-                    Editează un proiect
-                </a>
-                
-                <?php if ($isLoggedIn && !in_array('Staff productie', $_SESSION['roles'] ?? [])): ?>
-                    <a href="/projects/delete" class="btn">
-                        Șterge un proiect
-                    </a>
-                <?php endif; ?>
-
-            <?php endif; ?>
+            
+            <a href="/watchlist/create" class="btn">
+                Creează element nou în watchlist
+            </a>
         </div>
     </div>
 </body>

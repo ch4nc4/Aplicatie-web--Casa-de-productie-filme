@@ -121,6 +121,7 @@
         <?php endif; ?>
 
         <form method="POST" action="/auth/signup">
+            <?php echo csrf_token_field(); ?>
             <div class="form-row">
                 <div class="form-group">
                     <label for="prenume">Prenume:</label>

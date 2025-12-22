@@ -9,6 +9,9 @@ $userModel = new User();
 
 $statuses = $statusModel->getAll();
 $users = $userModel->getAll();
+
+session_start();
+$userId = $_SESSION['user_id'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -83,6 +86,7 @@ $users = $userModel->getAll();
         <?php endif; ?>
         
         <form method="POST" action="/projects/store">
+            <?php echo csrf_token_field(); ?>
             <div class="form-group">
                 <label for="title">Titlu Proiect *</label>
                 <input type="text" id="title" name="title" required 
@@ -162,35 +166,13 @@ $users = $userModel->getAll();
             
             <div class="form-group">
                 <label for="contribuitor">Contribuitor Principal *</label>
-                <?php if (empty($users)): ?>
-                    <div class="empty-data">
-                        <p><strong>Nu există utilizatori în sistem</strong></p>
-                        <p>Trebuie să adaugi cel puțin un utilizator pentru a-l asigna ca contribuitor principal.</p>
-                        <div class="add-option">
-                            <a href="/signup" class="btn btn-success">Înregistrează primul utilizator</a>
-                            <a href="/views/users" class="btn btn-secondary">Vezi toți utilizatorii</a>
-                        </div>
-                    </div>
-                    <select id="contribuitor" name="contribuitor" required disabled>
-                        <option value="">Nu există utilizatori disponibili</option>
-                    </select>
+                <?php if (!$userId): ?>
+                    <div class="warning">Trebuie să fii autentificat pentru a crea un proiect.</div>
                 <?php else: ?>
-                    <select id="contribuitor" name="contribuitor" required>
-                        <option value="">Selectează contributorul</option>
-                        <?php foreach ($users as $user): ?>
-                            <option value="<?= $user['id'] ?>" 
-                                    <?= (isset($_POST['contribuitor']) && $_POST['contribuitor'] == $user['id']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($user['prenume'] . ' ' . $user['nume_familie']) ?>
-                                <small>(<?= htmlspecialchars($user['email']) ?>)</small>
-                                <?php if (!empty($user['specializare'])): ?>
-                                    - <?= htmlspecialchars($user['specializare']) ?>
-                                <?php endif; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="quick-add">
-                        <h4>Acțiuni rapide pentru contribuitori:</h4>
-                        <a href="/signup" class="btn btn-success" style="font-size: 14px; padding: 6px 12px;">Adaugă utilizator nou</a>
+                    <input type="hidden" name="contribuitor" value="<?= $userId ?>">
+                    <div>
+                        <strong><?= htmlspecialchars($_SESSION['user_name'] ?? 'Utilizator') ?></strong>
+                        (<?= htmlspecialchars($_SESSION['user_email'] ?? '') ?>)
                     </div>
                 <?php endif; ?>
             </div>

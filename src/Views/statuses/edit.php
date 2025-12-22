@@ -6,7 +6,9 @@
     <title>Editează Status - Casa de Producție</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family:            <form method="POST" action="/statuses/update">
+                <?php echo csrf_token_field(); ?>
+                <input type="hidden" name="id" value="<?= $status['id'] ?>">rial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;

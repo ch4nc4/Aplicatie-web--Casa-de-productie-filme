@@ -8,7 +8,10 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            p                <form method="POST" action="/statuses/destroy" id="deleteForm">
+                    <?php echo csrf_token_field(); ?>
+                    <!-- Hidden ID field -->
+                    <input type="hidden" name="id" value="<?= $status['id'] ?>"">ing: 0;
             background-color: #f8f9fa;
         }
         .container { 

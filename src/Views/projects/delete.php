@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    $userId = $_SESSION['user_id'] ?? null;
+?>
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -6,7 +11,9 @@
     <title>Șterge Proiect<?= isset($project) ? ' - ' . htmlspecialchars($project['titlu']) : '' ?></title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-f            <form method="POST" action="/projects/destroy" id="deleteForm">
+                <?php echo csrf_token_field(); ?>
+                <input type="hidden" name="project_id" value="<?= $project['id'] ?>">ily: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f8f9fa;
@@ -207,7 +214,7 @@
             <div class="id-selector">
                 <h2>Selectează Proiectul de Șters</h2>
                 
-                <div class="search-type-selector">
+                <!-- <div class="search-type-selector">
                     <label>🔍 Caută proiectul după:</label>
                     <select id="search_type" onchange="updateSearchMode()">
                         <option value="id">ID Proiect</option>
@@ -234,19 +241,22 @@
                             <button type="submit" class="btn btn-danger">🔍 Caută pentru Ștergere</button>
                         </div>
                     </div>
-                </form>
+                </form> -->
 
                 <?php 
                 try {
                     require_once __DIR__ . '/../../Models/Project.php';
                     $projectModel = new Project();
                     $allProjects = $projectModel->getAll();
-                    if (!empty($allProjects)): 
+                    if (!empty($allProjects)):
+                        $userProjects = array_filter($allProjects, function($proj) use ($userId) {
+                         return $proj['id_contribuitor'] == $userId;
+                    });
                 ?>
                     <div style="margin-top: 20px;">
                         <h3>🎬 Proiecte Disponibile:</h3>
                         <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            <?php foreach ($allProjects as $proj): ?>
+                            <?php foreach ($userProjects as $proj): ?>
                                 <a href="/projects/delete?search_by=id&project_identifier=<?= $proj['id'] ?>" 
                                    class="btn btn-secondary" 
                                    style="padding: 8px 12px; font-size: 14px; text-align: left;">

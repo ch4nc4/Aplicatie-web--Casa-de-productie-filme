@@ -26,6 +26,11 @@ class StatusProjectController {
 
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // CSRF validation
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+                die('CSRF token validation failed');
+            }
+            
             $nume = trim($_POST['nume'] ?? '');
             $data_start = $_POST['data_start'] ?? '';
             $data_finalizare = $_POST['data_finalizare'] ?? '';
@@ -117,6 +122,11 @@ class StatusProjectController {
 
     public function update($id = null) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // CSRF validation
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+                die('CSRF token validation failed');
+            }
+            
             if (!$id && isset($_POST['id'])) {
                 $id = $_POST['id'];
             }
@@ -203,6 +213,11 @@ class StatusProjectController {
 
     public function destroy($id = null) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // CSRF validation
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+                die('CSRF token validation failed');
+            }
+            
             if (!$id && isset($_POST['id'])) {
                 $id = $_POST['id'];
             }
