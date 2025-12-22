@@ -16,6 +16,12 @@ class AuthController {
             if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
                 die('CSRF token validation failed');
             }
+
+            if (!$this->validateRecaptcha()) {
+                $error = "Validarea reCAPTCHA a eșuat. Te rugăm să încerci din nou.";
+                require __DIR__ . '/../Views/users/login.php';
+                return;
+            }
             
             $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
@@ -80,6 +86,12 @@ class AuthController {
             // CSRF validation
             if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
                 die('CSRF token validation failed');
+            }
+
+            if (!$this->validateRecaptcha()) {
+                $error = "Validarea reCAPTCHA a eșuat. Te rugăm să încerci din nou.";
+                require __DIR__ . '/../Views/users/signup.php';
+                return;
             }
             
             $email = trim($_POST['email'] ?? '');
@@ -268,5 +280,37 @@ class AuthController {
         $_SESSION['roles'] = array_map(function($role) {
             return $role['nume'];
         }, $roles);
+    }
+
+    protected function validateRecaptcha(): bool {
+        $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
+        if (empty($recaptchaResponse)) {
+            return false;
+        }
+
+        $secret = $_ENV['RECAPTCHA_SECRET_KEY'] ?? '';
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $data = [
+            'secret' => $secret,
+            'response' => $recaptchaResponse,
+            'remoteip' => $_SERVER['REMOTE_ADDR']
+        ];
+
+        $options = [
+            'http' => [
+                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method'  => 'POST',
+                'content' => http_build_query($data)
+            ]
+        ];
+
+        $context  = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+        if ($result === false) {
+            return false;
+        }
+
+        $resultJson = json_decode($result);
+        return $resultJson->success;
     }
 }

@@ -1,9 +1,18 @@
+<?php
+require_once __DIR__ . '/../../../config/env.php';
+
+$recaptchaSiteKey = env('RECAPTCHA_SITE_KEY');
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Casa de Producție</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -162,25 +171,12 @@
                     <label for="password">Parolă:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
+
+                <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($recaptchaSiteKey) ?>"></div><br>
                 
                 <button type="submit" class="btn">Intră în cont</button>
             </form>
         <?php endif; ?>
-
-        <!-- <form method="POST" action="/auth/login">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required 
-                       value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Parolă:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <button type="submit" class="btn">Intră în cont</button>
-        </form> -->
 
         <div class="links">
             <a href="/signup">Nu ai cont? Înregistrează-te</a>

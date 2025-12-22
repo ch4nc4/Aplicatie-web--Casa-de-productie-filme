@@ -1,9 +1,16 @@
+<?php
+require_once __DIR__ . '/../../../config/env.php';
+
+$recaptchaSiteKey = env('RECAPTCHA_SITE_KEY');
+?>
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Înregistrare - Casa de Producție</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -146,6 +153,8 @@
                 <input type="password" id="password" name="password" required minlength="6">
             </div>
             
+            <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($recaptchaSiteKey) ?>"></div><br>
+
             <button type="submit" class="btn">Creează cont</button>
         </form>
 

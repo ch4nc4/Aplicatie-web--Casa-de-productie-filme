@@ -2,8 +2,6 @@
 session_start();
 // Security headers for clickjacking and XSS protection
 header('X-Frame-Options: SAMEORIGIN');
-header('X-XSS-Protection: 1; mode=block');
-header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';");
 // CSRF token helper
 define('CSRF_TOKEN_NAME', 'csrf_token');
 if (empty($_SESSION[CSRF_TOKEN_NAME])) {
