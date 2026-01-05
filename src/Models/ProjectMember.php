@@ -84,4 +84,37 @@ class ProjectMember {
         $stmt->execute([$userId, $projectId]);
         return $stmt->fetchColumn() > 0;
     }
+
+    /**
+     * Obține toți membrii proiectelor cu detalii pentru export
+     */
+    public function getAllWithDetails() {
+        try {
+            $sql = "
+                SELECT 
+                    pm.*,
+                    p.title as project_title,
+                    p.tip as project_type,
+                    sp.nume as project_status,
+                    CONCAT(u.prenume, ' ', u.nume_familie) as member_name,
+                    u.email as member_email,
+                    pm.assigned_at as joined_at,
+                    CASE 
+                        WHEN u.deleted_at IS NULL THEN 'Activ'
+                        ELSE 'Inactiv'
+                    END as member_status
+                FROM MEMBRU_PROIECT pm
+                JOIN PROIECT p ON pm.id_proiect = p.id
+                JOIN USER u ON pm.id_user = u.id
+                LEFT JOIN STATUS_PROIECT sp ON p.id_status = sp.id
+                ORDER BY p.title, u.nume_familie, u.prenume
+            ";
+            
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Eroare la obținerea membrilor proiectelor cu detalii: " . $e->getMessage());
+            return [];
+        }
+    }
 }

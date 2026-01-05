@@ -156,4 +156,95 @@ class Project {
         $stmt->execute([$title]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Obține toate proiectele cu detalii pentru export
+     */
+    public function getAllWithDetails() {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    p.*,
+                    COUNT(pm.id) as nr_membri,
+                    s.nume as status_name
+                FROM PROIECT p
+                LEFT JOIN MEMBRU_PROIECT pm ON p.id = pm.id_proiect
+                LEFT JOIN STATUS_PROIECT s ON p.id_status = s.id
+                GROUP BY p.id
+                ORDER BY p.id DESC
+            ");
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Eroare la obținerea proiectelor cu detalii: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obține proiecte grupate pe categorii pentru export
+     */
+    public function getProjectsByCategory() {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    p.tip,
+                    COUNT(p.id) as numar_proiecte,
+                    SUM(p.buget) as buget_total,
+                    AVG(p.buget) as buget_mediu,
+                    (SELECT s.nume 
+                     FROM STATUS_PROIECT s 
+                     JOIN PROIECT p2 ON s.id = p2.id_status 
+                     WHERE p2.tip = p.tip OR (p2.tip IS NULL AND p.tip IS NULL)
+                     GROUP BY s.nume 
+                     ORDER BY COUNT(*) DESC 
+                     LIMIT 1) as status_predominant
+                FROM PROIECT p
+                GROUP BY p.tip
+                ORDER BY numar_proiecte DESC
+            ");
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Eroare la gruparea proiectelor pe categorii: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obține numărul total de proiecte
+     */
+    public function getTotalCount() {
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM PROIECT");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (PDOException $e) {
+            error_log("Eroare la numărarea proiectelor: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Obține numărul de proiecte active
+     */
+    public function getActiveCount() {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) as total 
+                FROM PROIECT p
+                JOIN STATUS_PROIECT s ON p.id_status = s.id
+                WHERE s.nume IN ('In dezvoltare', 'Activ', 'In productie')
+            ");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (PDOException $e) {
+            error_log("Eroare la numărarea proiectelor active: " . $e->getMessage());
+            return 0;
+        }
+    }
 }

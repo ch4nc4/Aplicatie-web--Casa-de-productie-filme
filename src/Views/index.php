@@ -287,6 +287,9 @@ if ($isLoggedIn) {
                 <a href="/statistics" class="btn">
                     📊 Statistici Dashboard
                 </a>
+                <a href="/admin/exports" class="btn" style="background: linear-gradient(45deg, #28a745, #20c997); color: white;">
+                    📥 Export Date
+                </a>
             <?php endif; ?>
 
             <a href="/views/projects" class="btn">

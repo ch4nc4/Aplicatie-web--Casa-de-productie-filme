@@ -34,6 +34,8 @@ if (!isset($_ENV['DB_HOST']) && file_exists(__DIR__ . '/.env')) {
 }
 
 use App\Controllers\EmailController;
+use App\Controllers\ExportController;
+
 
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -55,20 +57,6 @@ switch ($request) {
     case '/':
         require __DIR__ . $viewDir . 'index.php';
         break;
-
-    // **ADAUGĂ RUTELE DE EMAIL AICI:**
-    
-    // Email routes
-    case '/messages/inbox':
-        try {
-            $emailController = new EmailController();
-            $emailController->showInbox();
-        } catch (Exception $e) {
-            error_log("Eroare la inbox: " . $e->getMessage());
-            http_response_code(500);
-            echo "Eroare la încărcarea inbox-ului";
-        }
-        break;
         
     case '/messages/compose':
         try {
@@ -81,112 +69,6 @@ switch ($request) {
         }
         break;
         
-    case '/messages/sent':
-        try {
-            $emailController = new EmailController();
-            $emailController->getSentMessages();
-        } catch (Exception $e) {
-            error_log("Eroare la sent messages: " . $e->getMessage());
-            http_response_code(500);
-            echo "Eroare la încărcarea mesajelor trimise";
-        }
-        break;
-
-    case '/messages/send':
-        if ($requestMethod === 'POST') {
-            try {
-                $emailController = new EmailController();
-                $emailController->sendMessage();
-            } catch (Exception $e) {
-                error_log("Eroare la trimiterea mesajului: " . $e->getMessage());
-                echo json_encode(['success' => false, 'message' => 'Eroare la trimiterea mesajului']);
-            }
-        } else {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-        }
-        break;
-
-    case '/messages/mark-all-read':
-        if ($requestMethod === 'POST') {
-            try {
-                $emailController = new EmailController();
-                $emailController->markAllAsRead();
-            } catch (Exception $e) {
-                error_log("Eroare la marcarea ca citite: " . $e->getMessage());
-                echo json_encode(['success' => false, 'message' => 'Eroare la marcarea mesajelor']);
-            }
-        } else {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-        }
-        break;
-
-    case '/messages/view':
-        try {
-            $emailController = new EmailController();
-            $emailController->viewMessage();
-        } catch (Exception $e) {
-            error_log("Eroare la vizualizarea mesajului: " . $e->getMessage());
-            http_response_code(500);
-            echo "Eroare la încărcarea mesajului";
-        }
-        break;
-
-    case '/interactions/role-update':
-        try {
-            $emailController = new EmailController();
-            $emailController->showRoleChangeForm();
-        } catch (Exception $e) {
-            error_log("Eroare la role update form: " . $e->getMessage());
-            http_response_code(500);
-            echo "Eroare la încărcarea formularului";
-        }
-        break;
-
-    case '/interactions/send-role-change':
-        if ($requestMethod === 'POST') {
-            try {
-                $emailController = new EmailController();
-                $emailController->sendRoleChangeRequest();
-            } catch (Exception $e) {
-                error_log("Eroare la cererea de schimbare rol: " . $e->getMessage());
-                echo json_encode(['success' => false, 'message' => 'Eroare la trimiterea cererii']);
-            }
-        } else {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-        }
-        break;
-
-    case '/interactions/production-staff':
-        try {
-            $emailController = new EmailController();
-            $emailController->showStaffMessaging();
-        } catch (Exception $e) {
-            error_log("Eroare la staff messaging: " . $e->getMessage());
-            http_response_code(500);
-            echo "Eroare la încărcarea paginii staff";
-        }
-        break;
-
-    case '/interactions/send-staff-message':
-        if ($requestMethod === 'POST') {
-            try {
-                $emailController = new EmailController();
-                $emailController->sendStaffMessage();
-            } catch (Exception $e) {
-                error_log("Eroare la mesajul către staff: " . $e->getMessage());
-                echo json_encode(['success' => false, 'message' => 'Eroare la trimiterea mesajului']);
-            }
-        } else {
-            http_response_code(405);
-            echo json_encode(['error' => 'Method not allowed']);
-        }
-        break;
-
-    // **RUTELE TALE EXISTENTE CONTINUĂ AICI:**
-
     case '/views/projects':
         require __DIR__ . $projDir . 'index.php';
         break;
@@ -284,8 +166,6 @@ switch ($request) {
         $controller = new StatusProjectController();
         $controller->destroy();
         break;
-
-    // ... restul rutelor tale rămân la fel ...
 
     case '/projects/create':
         require __DIR__ . $projDir . 'create.php';
@@ -478,40 +358,50 @@ switch ($request) {
         require_once __DIR__ . '/src/Views/statistics/index.php';
         break;
 
+    // Export - doar pentru administratori
+    case '/admin/exports':
+        require_once __DIR__ . '/src/Controllers/ExportController.php';
+        $controller = new ExportController();
+        $controller->showExportPage();
+        break;
+
+    case '/export/projects/excel':
+        require_once __DIR__ . '/src/Controllers/ExportController.php';
+        $controller = new ExportController();
+        $controller->exportProjectsExcel();
+        break;
+
+    case '/export/projects/categories':
+        require_once __DIR__ . '/src/Controllers/ExportController.php';
+        $controller = new ExportController();
+        $controller->exportProjectsByCategoryExcel();
+        break;
+
+    case '/export/users/excel':
+        require_once __DIR__ . '/src/Controllers/ExportController.php';
+        $controller = new ExportController();
+        $controller->exportUsersExcel();
+        break;
+
+    case '/export/roles/distribution':
+        require_once __DIR__ . '/src/Controllers/ExportController.php';
+        $controller = new ExportController();
+        $controller->exportRoleDistributionExcel();
+        break;
+
+    case '/export/project-members/excel':
+        require_once __DIR__ . '/src/Controllers/ExportController.php';
+        $controller = new ExportController();
+        $controller->exportProjectMembersExcel();
+        break;
+        
     default:
-        // **Verifică și rute cu parametri pentru mesaje:**
-        if (preg_match('/^\/messages\/mark-read\/(\d+)$/', $request, $matches)) {
-            $_GET['messageId'] = $matches[1];
-            if ($requestMethod === 'POST') {
-                try {
-                    $emailController = new EmailController();
-                    $emailController->markAsRead();
-                } catch (Exception $e) {
-                    error_log("Eroare la marcarea ca citit: " . $e->getMessage());
-                    echo json_encode(['success' => false, 'message' => 'Eroare']);
-                }
-            } else {
-                http_response_code(405);
-                echo json_encode(['error' => 'Method not allowed']);
-            }
-             } elseif (preg_match('/^\/messages\/view\/(\d+)$/', $request, $matches)) {
-            $_GET['messageId'] = $matches[1];
-            try {
-                $emailController = new EmailController();
-                $emailController->viewMessage();
-            } catch (Exception $e) {
-                error_log("Eroare la vizualizarea mesajului: " . $e->getMessage());
-                http_response_code(500);
-                echo "Eroare la încărcarea mesajului";
-            }
+        // 404 pentru rute necunoscute
+        http_response_code(404);
+        if (file_exists(__DIR__ . $viewDir . '404.php')) {
+            require __DIR__ . $viewDir . '404.php';
         } else {
-            // 404 pentru rute necunoscute
-            http_response_code(404);
-            if (file_exists(__DIR__ . $viewDir . '404.php')) {
-                require __DIR__ . $viewDir . '404.php';
-            } else {
-                echo '<h1>404 - Pagina nu a fost găsită</h1>';
-            }
+            echo '<h1>404 - Pagina nu a fost găsită</h1>';
         }
         break;
 }
