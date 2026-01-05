@@ -143,4 +143,17 @@ class Project {
         $stmt->execute([$projectId]);
         return $stmt->fetchAll();
     }
+
+    // READ - gaseste proiect dupa titlu (pentru email messaging)
+    public function findByTitle($title) {
+        $sql = "SELECT p.*, s.nume as status_name, u.prenume, u.nume_familie 
+                FROM PROIECT p 
+                LEFT JOIN STATUS_PROIECT s ON p.id_status = s.id
+                LEFT JOIN USER u ON p.contribuitor = u.id
+                WHERE p.title = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$title]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

@@ -2,7 +2,19 @@
 session_start();
 $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
+
+$unreadCount = 0;
+if ($isLoggedIn) {
+    try {
+        require_once __DIR__ . '/../Models/EmailMessage.php';
+        $emailModel = new EmailMessage();
+        $unreadCount = $emailModel->getUnreadCount($_SESSION['user_id']);
+    } catch (Exception $e) {
+        $unreadCount = 0;
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -20,6 +32,114 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
             justify-content: center;
             align-items: center;
         }
+        
+        /* Email widget în colțul dreapta sus */
+        .email-widget {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(102, 15, 34, 0.2);
+        }
+        
+        .email-header {
+            text-align: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(102, 15, 34, 0.2);
+        }
+        
+        .email-title {
+            font-weight: bold;
+            color: rgb(102, 15, 34);
+            font-size: 1.1em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .unread-badge {
+            background: #dc3545;
+            color: white;
+            font-size: 0.7em;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .email-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .email-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #333;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(102, 15, 34, 0.2);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            min-width: 160px;
+        }
+        
+        .email-btn:hover {
+            background: rgba(102, 15, 34, 0.1);
+            color: rgb(102, 15, 34);
+            border-color: rgb(102, 15, 34);
+            transform: translateY(-1px);
+        }
+        
+        .email-btn .icon {
+            font-size: 1.1em;
+        }
+        
+        .email-btn .text {
+            flex: 1;
+            text-align: left;
+        }
+        
+        /* Responsive pentru mobile */
+        @media (max-width: 768px) {
+            .email-widget {
+                top: 10px;
+                right: 10px;
+                padding: 12px;
+                max-width: 200px;
+            }
+            
+            .email-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+                min-width: 140px;
+            }
+            
+            .email-title {
+                font-size: 1em;
+            }
+        }
+        
+        /* Stilurile existente pentru restul paginii */
         .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.37);
@@ -110,6 +230,24 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
     </style>
 </head>
 <body>
+        <?php if ($isLoggedIn && !in_array('Admin', $_SESSION['roles'] ?? [])): ?>
+        <div class="email-widget">
+            <div class="email-header">
+                <h4 class="email-title">
+                    📧 Mesaje
+                    <?php if ($unreadCount > 0): ?>
+                        <span class="unread-badge"><?= $unreadCount ?></span>
+                    <?php endif; ?>
+                </h4>
+            </div>
+                
+            <a href="/messages/compose" class="email-btn">
+                <span class="icon">✉️</span>
+                <span class="text">Trimite nou</span>
+            </a>
+        </div>
+    <?php endif; ?>
+
     <div class="container">
         <div class="logo">Casa de Producție</div>
         <div class="subtitle">Filme Independente</div>
@@ -145,6 +283,9 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
             <?php if ($isLoggedIn && in_array('Admin', $_SESSION['roles'] ?? [])): ?>
                 <a href="/admin/users" class="btn">
                     Vezi Useri
+                </a>
+                <a href="/statistics" class="btn">
+                    📊 Statistici Dashboard
                 </a>
             <?php endif; ?>
 
