@@ -188,11 +188,16 @@ session_start();
                <div class="movie-card">
                     <div class="movie-rank">#<?= htmlspecialchars($movie['position']) ?></div>
                     
-                    <!-- Nu mai afișăm poster, folosim placeholder -->
-                    <div class="no-poster">
-                        🎬<br>
-                        <?= htmlspecialchars($movie['title']) ?>
-                    </div>
+                    <?php if (!empty($movie['poster_url'])): ?>
+                        <img src="<?= htmlspecialchars($movie['poster_url']) ?>" 
+                            alt="Poster <?= htmlspecialchars($movie['title']) ?>"
+                            class="movie-poster">
+                    <?php else: ?>
+                        <div class="no-poster">
+                            🎬<br>
+                            <?= htmlspecialchars($movie['title']) ?>
+                        </div>
+                    <?php endif; ?>
                     
                     <div class="movie-content">
                         <div class="movie-title"><?= htmlspecialchars($movie['title']) ?></div>

@@ -83,7 +83,7 @@ class ImdbBoxOffice {
                 }
                 
                 // Extragem posterul din img cu clasa ipc-image
-                if (preg_match('/<img[^>]*src="([^"]+)"[^>]*class="[^"]*ipc-image[^"]*"/', $movieHtml, $posterMatches)) {
+                if (preg_match('/<img[^>]*class="[^"]*ipc-image[^"]*"[^>]*src="([^"]+)"/', $movieHtml, $posterMatches)) {
                     $movie['poster_url'] = $posterMatches[1];
                 }
                 
