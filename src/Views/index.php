@@ -164,9 +164,15 @@ $userName = $isLoggedIn ? $_SESSION['user_name'] ?? 'Utilizator' : null;
                 </a>
             <?php endif; ?>
 
-            <a href="/views/descriptions" class="btn btn-secondary">
-                Despre Aplicație
+            <a href="/top-movies" class="btn">
+                🎬 Top Filme Box Office
             </a>
+
+            <?php if (!in_array('Admin', $_SESSION['roles'] ?? [])): ?>
+               <a href="/views/descriptions" class="btn btn-secondary">
+                Despre Aplicație
+                 </a>
+            <?php endif; ?>
 
             <?php if ($isLoggedIn): ?>
                 <a href="/logout" class="btn btn-logout">

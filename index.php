@@ -294,6 +294,18 @@ switch ($request) {
         $controller->index();
         break;
 
+    case '/top-movies':
+        require_once __DIR__ . '/src/Controllers/TopMoviesController.php';
+        $controller = new TopMoviesController();
+        $controller->index();
+        break;
+
+    case '/top-movies/refresh':
+        require_once __DIR__ . '/src/Controllers/TopMoviesController.php';
+        $controller = new TopMoviesController();
+        $controller->refresh();
+        break;
+
     default:
         http_response_code(404);
         require __DIR__ . $viewDir . '404.php';
