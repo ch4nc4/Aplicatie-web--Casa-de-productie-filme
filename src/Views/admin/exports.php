@@ -126,7 +126,7 @@ if (!isset($stats)) {
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1><i class="fas fa-download me-3"></i>Export Date</h1>
-                    <p class="mb-0 lead">Exportă informațiile din aplicație în formate Excel (CSV) pentru analiză externă</p>
+                    <p class="mb-0 lead">Exportă informațiile din aplicație în format PDF pentru analiză externă</p>
                 </div>
                 <div class="col-md-4 text-end">
                     <a href="/admin/users" class="btn btn-outline-light me-2">
@@ -200,12 +200,12 @@ if (!isset($stats)) {
                             <strong>Include:</strong> ID, Titlu, Tip, Status, Buget, Perioada, Descriere, Nr. membri, Date creare/actualizare
                         </div>
                         <div class="mt-3">
-                            <span class="download-format">Excel (CSV)</span>
-                            <span class="download-format">UTF-8</span>
+                            <span class="download-format">PDF</span>
+                            <span class="download-format">Format profesional</span>
                         </div>
                         <div class="mt-4">
-                            <button onclick="exportData('/export/projects/excel')" class="btn btn-success btn-export">
-                                <i class="fas fa-file-excel me-1"></i>Descarcă Excel
+                            <button onclick="exportData('/export/projects/pdf')" class="btn btn-success btn-export">
+                                <i class="fas fa-file-pdf me-1"></i>Descarcă PDF
                             </button>
                         </div>
                     </div>
@@ -225,12 +225,12 @@ if (!isset($stats)) {
                             <strong>Include:</strong> Tip/Categorie, Nr. proiecte, Buget total, Buget mediu, Status predominant
                         </div>
                         <div class="mt-3">
-                            <span class="download-format">Excel (CSV)</span>
+                            <span class="download-format">PDF</span>
                             <span class="download-format">Analiză agregată</span>
                         </div>
                         <div class="mt-4">
-                            <button onclick="exportData('/export/projects/categories')" class="btn btn-success btn-export">
-                                <i class="fas fa-file-excel me-1"></i>Descarcă Excel
+                            <button onclick="exportData('/export/projects/categories/pdf')" class="btn btn-success btn-export">
+                                <i class="fas fa-file-pdf me-1"></i>Descarcă PDF
                             </button>
                         </div>
                     </div>
@@ -250,12 +250,12 @@ if (!isset($stats)) {
                             <strong>Include:</strong> Date personale, Email, Roluri, Nr. proiecte active, Activitate recentă, Status cont
                         </div>
                         <div class="mt-3">
-                            <span class="download-format">Excel (CSV)</span>
+                            <span class="download-format">PDF</span>
                             <span class="download-format">Date GDPR compliant</span>
                         </div>
                         <div class="mt-4">
-                            <button onclick="exportData('/export/users/excel')" class="btn btn-primary btn-export">
-                                <i class="fas fa-file-excel me-1"></i>Descarcă Excel
+                            <button onclick="exportData('/export/users/pdf')" class="btn btn-primary btn-export">
+                                <i class="fas fa-file-pdf me-1"></i>Descarcă PDF
                             </button>
                         </div>
                     </div>
@@ -275,12 +275,12 @@ if (!isset($stats)) {
                             <strong>Include:</strong> Nume rol, Nr. utilizatori, Procent din total, Utilizatori activi/inactivi
                         </div>
                         <div class="mt-3">
-                            <span class="download-format">Excel (CSV)</span>
+                            <span class="download-format">PDF</span>
                             <span class="download-format">Analiză statistică</span>
                         </div>
                         <div class="mt-4">
-                            <button onclick="exportData('/export/roles/distribution')" class="btn btn-warning btn-export">
-                                <i class="fas fa-file-excel me-1"></i>Descarcă Excel
+                            <button onclick="exportData('/export/roles/distribution/pdf')" class="btn btn-warning btn-export">
+                                <i class="fas fa-file-pdf me-1"></i>Descarcă PDF
                             </button>
                         </div>
                     </div>
@@ -300,12 +300,12 @@ if (!isset($stats)) {
                             <strong>Include:</strong> Proiect, Tip proiect, Membru, Email, Rol în proiect, Data alăturare, Observații
                         </div>
                         <div class="mt-3">
-                            <span class="download-format">Excel (CSV)</span>
+                            <span class="download-format">PDF</span>
                             <span class="download-format">Relații proiecte-membri</span>
                         </div>
                         <div class="mt-4">
-                            <button onclick="exportData('/export/project-members/excel')" class="btn btn-info btn-export">
-                                <i class="fas fa-file-excel me-1"></i>Descarcă Excel
+                            <button onclick="exportData('/export/project-members/pdf')" class="btn btn-info btn-export">
+                                <i class="fas fa-file-pdf me-1"></i>Descarcă PDF
                             </button>
                         </div>
                     </div>
@@ -323,12 +323,12 @@ if (!isset($stats)) {
                         </h5>
                         <div class="row">
                             <div class="col-md-4">
-                                <h6><i class="fas fa-file-excel me-2"></i>Format Fișiere</h6>
+                                <h6><i class="fas fa-file-pdf me-2"></i>Format Fișiere</h6>
                                 <ul class="list-unstyled">
-                                    <li>• CSV cu encoding UTF-8</li>
-                                    <li>• Compatibil Excel/LibreOffice</li>
-                                    <li>• Separatori standard</li>
-                                    <li>• Headers descriptive</li>
+                                    <li>• PDF format profesional</li>
+                                    <li>• Compatibil toate sistemele</li>
+                                    <li>• Design formatat și lizibil</li>
+                                    <li>• Headers și footer personalizate</li>
                                 </ul>
                             </div>
                             <div class="col-md-4">
@@ -364,7 +364,7 @@ if (!isset($stats)) {
                     <div class="spinner-border text-primary mb-3" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
-                    <h6>Se generează fișierul...</h6>
+                    <h6>Se generează raportul PDF...</h6>
                     <p class="mb-0 text-muted">Vă rugăm așteptați</p>
                 </div>
             </div>

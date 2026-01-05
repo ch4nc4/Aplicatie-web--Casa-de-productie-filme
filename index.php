@@ -14,7 +14,6 @@ function csrf_token_field() {
 require_once __DIR__ . '/src/Models/User.php';
 require_once __DIR__ . '/src/Models/Project.php';
 require_once __DIR__ . '/src/Models/EmailMessage.php';
-require_once __DIR__ . '/src/Services/EmailService.php';
 require_once __DIR__ . '/src/Controllers/EmailController.php';
 
 // Database connection (dacă ai un fișier de configurare DB)
@@ -365,34 +364,34 @@ switch ($request) {
         $controller->showExportPage();
         break;
 
-    case '/export/projects/excel':
+    case '/export/projects/pdf':
         require_once __DIR__ . '/src/Controllers/ExportController.php';
         $controller = new ExportController();
-        $controller->exportProjectsExcel();
+        $controller->exportProjectsPDF();
         break;
 
-    case '/export/projects/categories':
+    case '/export/projects/categories/pdf':
         require_once __DIR__ . '/src/Controllers/ExportController.php';
         $controller = new ExportController();
-        $controller->exportProjectsByCategoryExcel();
+        $controller->exportProjectsByCategoryPDF();
         break;
 
-    case '/export/users/excel':
+    case '/export/users/pdf':
         require_once __DIR__ . '/src/Controllers/ExportController.php';
         $controller = new ExportController();
-        $controller->exportUsersExcel();
+        $controller->exportUsersPDF();
         break;
 
-    case '/export/roles/distribution':
+    case '/export/roles/distribution/pdf':
         require_once __DIR__ . '/src/Controllers/ExportController.php';
         $controller = new ExportController();
-        $controller->exportRoleDistributionExcel();
+        $controller->exportRoleDistributionPDF();
         break;
 
-    case '/export/project-members/excel':
+    case '/export/project-members/pdf':
         require_once __DIR__ . '/src/Controllers/ExportController.php';
         $controller = new ExportController();
-        $controller->exportProjectMembersExcel();
+        $controller->exportProjectMembersPDF();
         break;
         
     default:
